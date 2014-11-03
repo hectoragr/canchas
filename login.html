@@ -1,5 +1,6 @@
 <html lang="en">
-  <head>
+
+<head>
     <!--includes meta tags, title and more header definitions-->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -10,7 +11,7 @@
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
     <link rel="icon" type="image/png" href="img/favicon.png">
     <title>
-        Login - Canchas
+        Login - Tec deportes
     </title>
 
     <!-- Furatto core CSS -->
@@ -22,48 +23,102 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-  </head>
-  <body style="">
+</head>
+
+<body style="">
 
     <nav class="navigation-bar ">
-       <ul class="brand-section">
-         <li class="brand-name">
-          <a href="./" class="menu-trigger" id="trigger">Canchas</a>
-         </li>
-         <li class="menu-toggle">
-          <a href="#"></a>
-         </li>
-       </ul>
-       <ul class="pull-right">
-         <li class="divider"></li>
-         <li><a href="#">Login</a></li>
-         <li class="divider"></li>
-         <li><a href="#" class="button danger three-d">Sign Up</a></li>
-       </ul>
+        <ul class="brand-section">
+            <li class="brand-name">
+                <a href="./" class="menu-trigger" id="trigger">Tec deportes</a>
+            </li>
+            <li class="menu-toggle">
+                <a href="#"></a>
+            </li>
+        </ul>
+        <ul class="pull-right">
+            <li class="divider"></li>
+            <li><a href="./login">Login</a>
+            </li>
+            <li class="divider"></li>
+            <li><a href="./registro" class="button danger three-d">Sign Up</a>
+            </li>
+        </ul>
     </nav>
 
     <div class="row">
-      <form id="login" class="col-6 offset-3" action="login/user" method="post" accept-charset="utf-8">
-        <fieldset class="fieldset">
-          <legend>Inicio sesión</legend>
-        <div class="row">
-          <label for="name">E-mail</label>
-          <input type="email" name="email" id="email" value="" placeholder="E-mail" />  
-        </div>
-        <div class="row">
-          <label for="password">Password</label>
-          <input type="password" name="password" id="password" value="" placeholder="Password" />
-        </div>
-        </fieldset>
-      </form>
+        <form id="login" class="col-6 offset-3" action="login/user" method="post" accept-charset="utf-8">
+            <fieldset class="fieldset">
+                <legend>Inicio sesión</legend>
+                <div class="row">
+                    <label for="name">E-mail</label>
+                    <input type="email" name="email" id="email" value="" placeholder="E-mail" />
+                </div>
+                <div class="row">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password" value="" placeholder="Password" />
+                </div>
+                <div class="row">
+                    <input type="submit" id="loginBtn" value="Enviar" class="button primary block" data-furatto="modal" data-target="#modal-1" data-transition="1" data-theme="alpha">
+                </div>
+            </fieldset>
+        </form>
     </div>
 
 
     <!--includes javascript at the bottom so the page loads faster-->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script type="text/javascript" charset="utf-8" src="/furatto/dist/js/furatto.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/furatto.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+    var logpath = "";
+    $(document).ready(function() {
+        $('#login').submit(function(e) {
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr("action"),
+                type: "POST",
+                dataType: "JSON",
+                data: $(this).serialize(),
+                error: function() {
+                    $('.modal-header').html("Error");
+                    $('.modal-msg').html("<p>Experimentamos fallas técnicas. Intente más tarde.</p>");
+                },
+                success: function(result) {
+                    console.log(result);
+                    $('.modal-header').html("Validación");
+                    $('.modal-msg').html("<p>" + result.msg + "</p>");
+                    if (result.error == false) {
+                        window.location.href = "booking";
+                    }
+                }
+            });
+        });
 
+        $(document).on('click', 'loginBtn', function() {
+            $('#login').submit();
+        });
 
+    });
+    </script>
+    <!--a link element to trigger the modal-->
+
+    <!--the modal-->
+    <div class="modal" id="modal-1">
+        <div class="modal-header">
+            Modal Dialog
+        </div>
+        <div class="modal-content">
+            <div>
+                <div class="modal-msg">
+                    <p>This is a modal window.</p>
+                </div>
+                <div class="modal-footer">
+                    <a class="modal-close button alpha primary">Cerrar</a>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal-overlay"></div>
-  </body>
+</body>
+
 </html>

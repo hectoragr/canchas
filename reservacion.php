@@ -1,3 +1,9 @@
+<?php
+  session_start();
+  if (!isset($_SESSION['user'])) {
+    header("./login");
+  }
+?>
 <html lang="en">
   <head>
     <!--includes meta tags, title and more header definitions-->
@@ -10,7 +16,7 @@
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
     <link rel="icon" type="image/png" href="img/favicon.png">
     <title>
-      Inicio - Tec deportes
+        Calendario - Tec deportes
     </title>
 
     <!-- Furatto core CSS -->
@@ -35,28 +41,41 @@
          </li>
        </ul>
        <ul class="pull-right">
-         <li class="divider"></li>
-         <li><a href="./login">Login</a></li>
-         <li class="divider"></li>
-         <li><a href="./registro" class="button danger three-d">Sign Up</a></li>
+          <li>
+          <a href="./profile" class="button danger">Bievenido, <?php echo ucwords($_SESSION['user']['nombres']);?></a>
+         </li>
        </ul>
     </nav>
 
-
-    <div class="row text-center">
-      <h1 class="text-center">Bienvenido</h1>
-      <img src="img/formacion.jpg" width="200px" style="height:200px;">
-    </div>
     <div class="row">
-      <p class="col-6 offset-3">En esta página vas a poder agendar y re-agendar tus juegos de intramuros. Te invitamos a registrarte a tí y a tu equipo para formar parte de esta nueva experiencia.</p>
+      <?php print_r($_SESSION['user']); ?>
     </div>
+
 
     <!--includes javascript at the bottom so the page loads faster-->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script type="text/javascript" charset="utf-8" src="/furatto/dist/js/furatto.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/furatto.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
 
+    </script>
+    <!--a link element to trigger the modal-->
 
-
+  <!--the modal-->
+  <div class="modal" id="modal-1">
+    <div class="modal-header">
+      Modal Dialog
+    </div>
+    <div class="modal-content">
+      <div>
+        <div class="modal-msg">
+          <p>This is a modal window.</p>
+        </div>
+        <div class="modal-footer">
+          <a class="modal-close button alpha primary">Cerrar</a>
+        </div>
+      </div>
+    </div>
+  </div>
     <div class="modal-overlay"></div>
   </body>
 </html>

@@ -1,3 +1,9 @@
+<?php
+  session_start();
+  if (!isset($_SESSION['user'])) {
+    header("./login");
+  }
+?>
 <html lang="en">
   <head>
     <!--includes meta tags, title and more header definitions-->
@@ -10,7 +16,7 @@
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
     <link rel="icon" type="image/png" href="img/favicon.png">
     <title>
-        Registrarse - Tec deportes
+        Perfil - Tec deportes
     </title>
 
     <!-- Furatto core CSS -->
@@ -35,17 +41,19 @@
          </li>
        </ul>
        <ul class="pull-right">
-         <li class="divider"></li>
-         <li><a href="./login">Login</a></li>
-         <li class="divider"></li>
-         <li><a href="#" class="button danger three-d">Sign Up</a></li>
+         <li>
+          <a href="./profile" class="button danger">Bievenido, <?php echo ucwords($_SESSION['user']['nombres']);?></a>
+         </li>
        </ul>
     </nav>
 
     <div class="row">
-      <form id="signup" class="col-6 offset-3" action="signup/user" method="post" accept-charset="utf-8">
+      <form id="login" class="col-6 offset-3" action="login/user" method="post" accept-charset="utf-8">
         <fieldset class="fieldset">
-          <legend>Crear cuenta</legend>
+          <legend>Perfil</legend>
+        <div class="row">
+          <button class="button danger">Editar</button>
+        </div>
         <div class="row">
           <label for="name">Nombre(s)</label>
           <input type="text" name="name" id="name" value="" placeholder="Ej. Miguel Angelo" />  
@@ -71,7 +79,7 @@
           <input type="password" name="rpassword" id="rpassword" value="" placeholder="Confirma Password" />
         </div>
         <div class="row">
-          <input type="submit" id="btnSignup" class="button primary block" value="Enviar" data-furatto="modal" data-target="#modal-1" data-transition="1" data-theme="alpha"/>
+          <input type="submit" class="button primary block" value="Enviar"/>
         </div>
         </fieldset>
       </form>
@@ -81,51 +89,27 @@
     <!--includes javascript at the bottom so the page loads faster-->
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/furatto.min.js"></script>
-    <script>
-      $(document).ready(function () {
-        $('#signup').submit(function(e) {
-            e.preventDefault();
-            $.ajax({
-                url: $(this).attr("action"),
-                type: "POST",
-                dataType: "JSON",
-                data: $(this).serialize(),
-                error: function() {
-                    $('.modal-header').html("Error");
-                    $('.modal-msg').html("<p>Experimentamos fallas técnicas. Intente más tarde.</p>");
-                },
-                success: function(result) {
-                    console.log(result);
-                    if (result.error == false) {
-                      $('.modal-header').html("Cuenta creada con éxito");
-                    }else {
-                      $('.modal-header').html("Error de Validación");
-                    }
-                    $('.modal-msg').html("<p>" + result.msg + "</p>");
-                }
-            });
-        });
-        $('document').on('click', 'btnSignup', function() {
-          $('#signup').submit();
-        })
-      });
+    <script type="text/javascript" charset="utf-8">
+
     </script>
-    <!--the modal-->
-    <div class="modal" id="modal-1">
-        <div class="modal-header">
-            Modal Dialog
-        </div>
-        <div class="modal-content">
-            <div>
-                <div class="modal-msg">
-                    <p>This is a modal window.</p>
-                </div>
-                <div class="modal-footer">
-                    <a class="modal-close button alpha primary">Cerrar</a>
-                </div>
-            </div>
-        </div>
+    <!--a link element to trigger the modal-->
+
+  <!--the modal-->
+  <div class="modal" id="modal-1">
+    <div class="modal-header">
+      Modal Dialog
     </div>
+    <div class="modal-content">
+      <div>
+        <div class="modal-msg">
+          <p>This is a modal window.</p>
+        </div>
+        <div class="modal-footer">
+          <a class="modal-close button alpha primary">Cerrar</a>
+        </div>
+      </div>
+    </div>
+  </div>
     <div class="modal-overlay"></div>
   </body>
 </html>

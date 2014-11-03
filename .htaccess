@@ -1,0 +1,13 @@
+# For security reasons, Option followsymlinks cannot be overridden.
+#Options +FollowSymlinks
+#Options +SymLinksIfOwnerMatch
+RewriteEngine on
+
+RewriteRule ^inicio$ index.html
+RewriteRule ^booking$ reservacion.php
+RewriteRule ^login$ login.html
+RewriteRule ^registro$ signup.html
+RewriteRule ^profile$ profile.php
+RewriteRule ^login/user$ include/Libs.php?accion=login
+RewriteRule ^signup/user$ include/Libs.php?accion=signup
+RewriteRule ^confirmar$ include/Libs.php?accion=confirmar
