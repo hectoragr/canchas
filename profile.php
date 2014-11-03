@@ -52,34 +52,34 @@
         <fieldset class="fieldset">
           <legend>Perfil</legend>
         <div class="row">
-          <button class="button danger">Editar</button>
+          <button class="button danger" id="btnEditar">Editar</button>
         </div>
         <div class="row">
           <label for="name">Nombre(s)</label>
-          <input type="text" name="name" id="name" value="" placeholder="Ej. Miguel Angelo" />  
+          <input type="text" name="name" id="name" value="" placeholder="Ej. Miguel Angelo" readonly="readonly" />  
         </div>
         <div class="row">
           <label for="name">Apellidos</label>
-          <input type="text" name="lastname" id="lastname" value="" placeholder="Ej. Garza García" />  
+          <input type="text" name="lastname" id="lastname" value="" placeholder="Ej. Garza García"  readonly="readonly"/>  
         </div>
         <div class="row">
           <label for="name">E-mail</label>
-          <input type="email" name="email" id="email" value="" placeholder="E-mail" />  
+          <input type="email" name="email" id="email" value="" placeholder="E-mail"  readonly="readonly"/>  
         </div>
         <div class="row">
           <label for="phone">Teléfono</label>
-          <input type="tel" name="phone" id="phone" value="" placeholder="Ej. 8181809090" />  
+          <input type="tel" name="phone" id="phone" value="" placeholder="Ej. 8181809090"  readonly="readonly"/>  
         </div>
         <div class="row">
           <label for="password">Password</label>
-          <input type="password" name="password" id="password" value="" placeholder="Password" />
+          <input type="password" name="password" id="password" value="" placeholder="*******"  readonly="readonly"/>
         </div>
         <div class="row">
           <label for="rpassword">Confirma Password</label>
-          <input type="password" name="rpassword" id="rpassword" value="" placeholder="Confirma Password" />
+          <input type="password" name="rpassword" id="rpassword" value="" placeholder="*******"  readonly="readonly"/>
         </div>
         <div class="row">
-          <input type="submit" class="button primary block" value="Enviar"/>
+          <input type="submit" class="button primary block" value="Enviar"  readonly="readonly"/>
         </div>
         </fieldset>
       </form>
@@ -90,7 +90,27 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/furatto.min.js"></script>
     <script type="text/javascript" charset="utf-8">
-
+      $(document).ready(function () {
+        $.ajax({
+          url: 'get/user',
+          dataType: 'JSON',
+          error: function () {
+            $('.modal-header').html("Error");
+            $('.modal-msg').html("<p>Experimentamos fallas técnicas. Intente más tarde.</p>");
+          }, 
+          success: function (result) {
+            $('#name').val(result.nombres);
+            $('#lastname').val(result.apellidos);
+            $('#phone').val(result.telefono);
+            $('#emergencia').val(result.emergencia);
+            $('#email').val(result.correo);
+          }
+        });
+        $(document).on('click', '#btnEditar', function(e) {
+          e.preventDefault();
+          $('#login input').removeAttr("readonly");
+        });
+      });
     </script>
     <!--a link element to trigger the modal-->
 

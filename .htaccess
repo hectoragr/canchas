@@ -10,4 +10,5 @@ RewriteRule ^registro$ signup.html
 RewriteRule ^profile$ profile.php
 RewriteRule ^login/user$ include/Libs.php?accion=login
 RewriteRule ^signup/user$ include/Libs.php?accion=signup
+RewriteRule ^get/user$ include/Libs.php?accion=getuser
 RewriteRule ^confirmar$ include/Libs.php?accion=confirmar

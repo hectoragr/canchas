@@ -48,7 +48,43 @@
     </nav>
 
     <div class="row">
-      <?php print_r($_SESSION['user']); ?>
+      <div class="col-10 offset-1">
+      <h2>Tus juegos</h2>
+      <table class="responsive">
+       <thead>
+         <tr>
+           <th>Cancha</th>
+           <th>Equipo</th>
+           <th>Día</th>
+           <th>Horario</th>
+           <th>Arbitro</th>
+         </tr>
+       </thead>
+       <tbody>
+         <tr>
+           <td>1</td>
+           <td>Supercampeones</td>
+           <td>20 Noviembre 2014</td>
+           <td>7:30 - 9:00</td>
+           <td>Roberto García Orozco</td>
+         </tr>
+         <tr>
+           <td>2</td>
+           <td>Neutrinos</td>
+           <td>24 Noviembre 2014</td>
+           <td>9:00 - 10:30</td>
+           <td>Felipe Ramos Rizo</td>
+         </tr>
+         <tr>
+           <td>1</td>
+           <td>Supercampeones</td>
+           <td>28 Noviembre 2014</td>
+           <td>7:30 - 9:00</td>
+           <td>Chiquimarco</td>
+         </tr>
+       </tbody>
+    </table>
+    </div>
     </div>
 
 

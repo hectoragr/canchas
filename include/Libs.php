@@ -97,6 +97,29 @@ class Libs
 		return $json;
 	}
 
+	function get_user() {
+		if (!isset($_SESSION['user'])) {
+			die("error");
+		}else {
+			$db = new medoo();
+
+			$usuario = $db->get("usuario", 
+								   ["nombres", "id", "correo", "apellidos", "emergencia", "telefono"], 
+								   ["id" =>  $_SESSION['user']['id']
+								   	]);
+			if (!empty($usuario['id'])) {
+				$json = $usuario;
+				$_SESSION['user'] = $usuario;
+			}else {
+				$json['error'] = true;
+				$json['msg'] = "Usuario y/o contraseña no válidos";
+			}
+		}
+		return $json;
+
+	}
+
+
 	function isEmail($email){
 		return (!preg_match("/^[a-z]([\w\.]*)@[a-z]([\w\.-]*)\.[a-z]{2,3}$/", $email)) ? false : true;
 	}
@@ -110,6 +133,9 @@ if (isset($_GET["accion"])) {
 			break;
 		case 'signup':
 			$json = $libs->sign_up();
+			break;
+		case 'getuser':
+			$json = $libs->get_user();
 			break;
 		default:
 			$json = array("error" => true, "msg" => "Not found.");
