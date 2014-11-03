@@ -58,6 +58,7 @@
            <th>Día</th>
            <th>Horario</th>
            <th>Arbitro</th>
+           <th>Acciones</th>
          </tr>
        </thead>
        <tbody>
@@ -67,6 +68,10 @@
            <td>20 Noviembre 2014</td>
            <td>7:30 - 9:00</td>
            <td>Roberto García Orozco</td>
+           <td>
+             <a href="./reagendar/1" class="button warning">Re-agendar</a>
+             <a href="./cancelar/1" class="button danger">Cancelar</a>
+           </td>
          </tr>
          <tr>
            <td>2</td>
@@ -74,6 +79,10 @@
            <td>24 Noviembre 2014</td>
            <td>9:00 - 10:30</td>
            <td>Felipe Ramos Rizo</td>
+           <td>
+             <a href="./reagendar/1" class="button warning">Re-agendar</a>
+             <a href="./cancelar/1" class="button danger">Cancelar</a>
+           </td>
          </tr>
          <tr>
            <td>1</td>
@@ -81,6 +90,10 @@
            <td>28 Noviembre 2014</td>
            <td>7:30 - 9:00</td>
            <td>Chiquimarco</td>
+           <td>
+             <a href="./reagendar/1" class="button warning">Re-agendar</a>
+             <a href="./cancelar/1" class="button danger">Cancelar</a>
+           </td>
          </tr>
        </tbody>
     </table>
