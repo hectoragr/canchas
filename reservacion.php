@@ -2,6 +2,10 @@
   session_start();
   if (!isset($_SESSION['user'])) {
     header("./login");
+  }else {
+    if ($_SESSION['user']['admin']) {
+      header("./profile");
+    }
   }
 ?>
 <html lang="en">

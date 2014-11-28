@@ -10,7 +10,10 @@ class Libs
 	function login_user() {
 		$json = array('error' => false,
 					  'msg' => "Login successful");
-		
+		if (isset($_SESSION['user'])) {
+			unset($_SESSION['user']);
+		}
+
 		if (!isset($_POST['email']) || !$this->isEmail($_POST['email'])) {
 			$json['error'] = true;
 			$json['msg'] = "E-mail no válido";
@@ -23,7 +26,6 @@ class Libs
 
 		if (!$json['error']) {
 			$db = new medoo();
-
 			$usuario = $db->get("usuario", 
 								   ["nombres", "id", "correo", "apellidos"], 
 								   ["AND" =>  
@@ -36,8 +38,21 @@ class Libs
 				$json['data'] = $usuario;
 				$_SESSION['user'] = $usuario;
 			}else {
-				$json['error'] = true;
-				$json['msg'] = "Usuario y/o contraseña no válidos";
+				$usuario = $db->get("administrador", 
+									   ["nombres", "id", "correo", "apellidos"], 
+									   ["AND" =>  
+									   		["correo" => $_POST["email"], 
+									   		 "password" => sha1($_POST["password"])
+									   		]
+									   	]);
+				if (!empty($usuario['id'])) {
+					$usuario['admin'] = 1;
+					$json['data'] = $usuario;
+					$_SESSION['user'] = $usuario;
+				}else {
+					$json['error'] = true;
+					$json['msg'] = "Usuario y/o contraseña no válidos";
+				}
 			}
 		}
 
@@ -48,7 +63,10 @@ class Libs
 	function sign_up() {
 		$json = array('error' => false,
 					  'msg' => "Verifica tu correo para validar tu cuenta");
-		
+		if (isset($_SESSION['user'])) {
+			unset($_SESSION['user']);
+		}
+
 		if (!isset($_POST['email']) || !$this->isEmail($_POST['email'])) {
 			$json['error'] = true;
 			$json['msg'] = "E-mail no válido";
@@ -102,11 +120,22 @@ class Libs
 			die("error");
 		}else {
 			$db = new medoo();
-
-			$usuario = $db->get("usuario", 
-								   ["nombres", "id", "correo", "apellidos", "emergencia", "telefono"], 
-								   ["id" =>  $_SESSION['user']['id']
-								   	]);
+			if ($_SESSION['user']['admin']) {
+				$usuario = $db->get("administrador", 
+									   ["nombres", "id", "correo", "apellidos"], 
+									   ["AND" =>  
+									   		["correo" => $_POST["email"], 
+									   		 "password" => sha1($_POST["password"])
+									   		]
+									   	]);
+				$usuario['admin'] = 1;
+			}else {
+				$usuario = $db->get("usuario", 
+									   ["nombres", "id", "correo", "apellidos", "emergencia", "telefono"], 
+									   ["id" =>  $_SESSION['user']['id']
+									   	]);	
+			}
+			
 			if (!empty($usuario['id'])) {
 				$json = $usuario;
 				$_SESSION['user'] = $usuario;
