@@ -38,7 +38,7 @@
         </ul>
         <ul class="pull-right">
             <li class="divider"></li>
-            <li><a href="./login">Login</a>
+            <li><a href="./login.html">Login</a>
             </li>
             <li class="divider"></li>
             <li><a href="./registro" class="button danger three-d">Sign Up</a>
@@ -90,7 +90,7 @@
                     if (result.error == false) {
                         console.log(result);
                         if (result.data.admin > 0) {
-                            window.location.href = "profile";
+                            window.location.href = "admin";
                         }else {
                             window.location.href = "booking";
                         }

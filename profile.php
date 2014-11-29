@@ -1,7 +1,7 @@
 <?php
   session_start();
   if (!isset($_SESSION['user'])) {
-    header("./login");
+    header("Location: ./login.html");
   }
 ?>
 <html lang="en">

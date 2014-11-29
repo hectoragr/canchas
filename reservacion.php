@@ -1,10 +1,10 @@
 <?php
   session_start();
   if (!isset($_SESSION['user'])) {
-    header("./login");
+    header("Location: ./login.html");
   }else {
     if ($_SESSION['user']['admin']) {
-      header("./profile");
+      header("Location: ./profile");
     }
   }
 ?>

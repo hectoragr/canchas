@@ -3877,3 +3877,7 @@ a.addon:hover {
   background-color: rgba(52, 152, 219, 0.6);
   color: white;
 }
+
+.calendar td, .calendar th{
+  text-align: center;
+}
