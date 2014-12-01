@@ -24,10 +24,12 @@ RewriteRule ^equipos/table$ include/Libs.php?accion=equipotable
 RewriteRule ^add/arbitro$ include/Libs.php?accion=addarbitro
 RewriteRule ^add/equipo$ include/Libs.php?accion=addequipo
 RewriteRule ^agendar/partido$ include/Libs.php?accion=agendarpartido
+RewriteRule ^update/juego$ include/Libs.php?accion=updatejuego
 RewriteRule ^resultado/partido$ include/Libs.php?accion=resultadopartido
 RewriteRule ^get/day$ include/Libs.php?accion=getHorarioCanchas
 RewriteRule ^get/canchas$ include/Libs.php?accion=getcanchas
 RewriteRule ^capitan/juegos$ include/Libs.php?accion=getjuegoscapitan
+RewriteRule ^usuario/juegos$ include/Libs.php?accion=getjuegos
 RewriteRule ^eliminar/arbitro/([0-9]+)$ include/Libs.php?accion=deletearbitro&id=$1 [L,NC]
 RewriteRule ^eliminar/equipo/([0-9]+)$ include/Libs.php?accion=deleteequipo&id=$1 [L,NC]
 RewriteRule ^expulsar/equipo/([0-9]+)/([0-9]+)$ include/Libs.php?accion=popequipo&id=$1&uid=$2 [L,NC]
