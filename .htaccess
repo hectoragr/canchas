@@ -30,6 +30,7 @@ RewriteRule ^get/day$ include/Libs.php?accion=getHorarioCanchas
 RewriteRule ^get/canchas$ include/Libs.php?accion=getcanchas
 RewriteRule ^capitan/juegos$ include/Libs.php?accion=getjuegoscapitan
 RewriteRule ^usuario/juegos$ include/Libs.php?accion=getjuegos
+RewriteRule ^cambio/canchas/([0-9]+)/(.*)/(.*)$ include/Libs.php?accion=setcambio&uid=$1&link=$2&resp=$3 [L,NC]
 RewriteRule ^eliminar/arbitro/([0-9]+)$ include/Libs.php?accion=deletearbitro&id=$1 [L,NC]
 RewriteRule ^eliminar/equipo/([0-9]+)$ include/Libs.php?accion=deleteequipo&id=$1 [L,NC]
 RewriteRule ^expulsar/equipo/([0-9]+)/([0-9]+)$ include/Libs.php?accion=popequipo&id=$1&uid=$2 [L,NC]

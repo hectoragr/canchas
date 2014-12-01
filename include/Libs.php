@@ -869,8 +869,12 @@ class Libs
 								<a href='#updatejuego' data-juego='".$partido['id']."' class='button warning cambiarJuego'>Re-agendar</a>
 								<a href='cancelar/partido/".$partido['id']."/".date("G", strtotime($partido['hora_inicio']))."' class='button danger cancelPartido'>Cancelar</a>
 							   </td>";
+				}else if($partido["estatus"] == 2) {
+					$table .= "<td> Esperando aprobación de cambio </td>";
+				}else if($partido["estatus"] == 0){
+					$table .= "<td> Cancelado </td>";
 				}else {
-					$table .= "<td> ---- </td>";
+					$table .= "<td> --- </td>";
 				}
 
 				$table .= "</tr>";
@@ -973,12 +977,58 @@ class Libs
         									   "vieja_cancha" => $partido['cancha'],
         									   "link" => sha1($_POST['id']."-".$_SESSION['user']['id'])
         									  ]);
+        		$local = $db->get("equipo", "*", ["id" => $partido['local']]);
+        		$visitante = $db->get("equipo", "*", ["id" => $partido['visitante']]);
+        		if ($_SESSION['user']['id'] == $local['capitan']) {
+        			$otro = $db->get("usuario", "*", ["id" => $visitante['capitan']]);
+        		}else {
+        			$otro = $db->get("usuario", "*", ["id" => $local['capitan']]);
+        		}
+        		$urlacepto = "http://".$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT']."/canchas/cambio/".$otro['id']."/".sha1($_POST['id']."-".$_SESSION['user']['id'])."/yes";
+        		$urlcancel = "http://".$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT']."/canchas/cambio/".$otro['id']."/".sha1($_POST['id']."-".$_SESSION['user']['id'])."/no";
+        		$mail = $otro['correo'];
+        		$titulo = "Solicitud de cambio";
+        		$mensaje = "<hmtl>
+        					<body>
+        					<p>
+        						Estimado, ".ucwords($otro['nombres'])."
+        					</p>
+        					<p>
+        						El capitán de tu partido programado para las: ".$partido['hora_inicio']." ha solicitado un cambio para el horario ".$inicio.".
+        					</p>
+        					<p>
+        						Si deseas aceptar este cambio da click al siguiente enlace:
+        						<a href='".$urlacepto."'>Acepto el cambio</a>
+        					</p>
+        					<p>
+        						En caso contrario da click en este enlace para dejar el horario anterior:
+        						<a href='".$urlcancel."'>NO acepto el cambio</a>
+        					</p>
+        					</body>
+        					</html>";
+
+        		$cabeceras  = 'MIME-Version: 1.0' . "\r\n";
+				$cabeceras .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+				@mail($mail, $titulo, $mensaje, $cabeceras);
         		$db->update("partido", ["hora_inicio" => $inicio, "hora_fin" => $fin, "fecha" => $date, "cancha" => $_POST['cancha'], "estatus" => 2], ["id" => $_POST['id']]);
 
         	}
         }
 
         return $json;
+	}
+
+	function set_cambio() {
+		$db = new medoo();
+		$cambio = $db->get("cambio", "*", ["link" => $_GET['link']]);
+
+		if ($_GET['resp'] == "yes") {
+			$db->update("partido", ["estatus" => 1], ["id" => $cambio['partido']]);
+			$db->update("cambio", ["aprobado" => $_GET['uid']], ["id"=> $cambio['id']]);
+			die("Cambio realizado");
+		}else {
+			die("Fuuuu");
+		}
 	}
 
 	function isEmail($email){
@@ -1069,6 +1119,9 @@ if (isset($_GET["accion"])) {
 			break;
 		case 'updatejuego':
 			$json = $libs->update_juego();
+			break;
+		case 'setcambio':
+			$json = $libs->set_cambio();
 			break;
 		default:
 			$json = array("error" => true, "msg" => "Not found.");

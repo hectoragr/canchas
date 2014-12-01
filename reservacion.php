@@ -231,7 +231,7 @@
             success: function(result) {
               popUp(result.title, result.msg);
               if (result.success) {
-                location.reload();
+               // location.reload();
               }
             }
           });
