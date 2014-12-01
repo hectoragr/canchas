@@ -13,4 +13,18 @@ RewriteRule ^login/user$ include/Libs.php?accion=login
 RewriteRule ^signup/user$ include/Libs.php?accion=signup
 RewriteRule ^get/user$ include/Libs.php?accion=getuser
 RewriteRule ^get/dates$ include/Libs.php?accion=getcal
+RewriteRule ^editar/arbitro/([0-9]+)$ include/Libs.php?accion=getarbitro&id=$1 [L,NC]
+RewriteRule ^editar/equipo/([0-9]+)$ include/Libs.php?accion=getequipo&id=$1 [L,NC]
+RewriteRule ^get/arbitros$ include/Libs.php?accion=getarbitros
+RewriteRule ^get/equipos$ include/Libs.php?accion=getequipos
+RewriteRule ^push/equipo$ include/Libs.php?accion=pushequipo
+RewriteRule ^get/users$ include/Libs.php?accion=getusers
+RewriteRule ^equipos/usuarios$ include/Libs.php?accion=listequipos
+RewriteRule ^equipos/table$ include/Libs.php?accion=equipotable
+RewriteRule ^add/arbitro$ include/Libs.php?accion=addarbitro
+RewriteRule ^add/equipo$ include/Libs.php?accion=addequipo
+RewriteRule ^eliminar/arbitro/([0-9]+)$ include/Libs.php?accion=deletearbitro&id=$1 [L,NC]
+RewriteRule ^eliminar/equipo/([0-9]+)$ include/Libs.php?accion=deleteequipo&id=$1 [L,NC]
+RewriteRule ^expulsar/equipo/([0-9]+)/([0-9]+)$ include/Libs.php?accion=popequipo&id=$1&uid=$2 [L,NC]
+RewriteRule ^capitan/equipo/([0-9]+)/([0-9]+)$ include/Libs.php?accion=capiequipo&id=$1&uid=$2 [L,NC]
 RewriteRule ^confirmar$ include/Libs.php?accion=confirmar

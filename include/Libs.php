@@ -3,6 +3,7 @@
 * 
 */
 session_start();
+setlocale(LC_ALL, "es_ES");
 include_once("medoo.min.php");
 class Libs
 {
@@ -237,8 +238,353 @@ class Libs
 
 	}
 
+	function get_arbitros() {
+		$json = array();
+		$db = new medoo();
+		// $usuario = $db->select("arbitro", 
+		// 					   ["nombres", "id", "correo", "apellidos"], ["id[>]"=>0]);
+		$usuario = $db->select("arbitro", "*");
+		$msg = "";
+		foreach ($usuario as $user) {
+			$nombre = $user['nombres']." ".$user['apellidos'];
+			$id = $user['id'];
+			$botones = "<a href='editar/arbitro/$id' class='button primary editArb'>
+							Editar
+						</a>
+						<a href='eliminar/arbitro/$id' class='button danger deleteArb' data-furatto='modal' data-target='#modal-1'>
+							Eliminar
+						</a>";
+			$msg .= "<tr>
+						<td>$nombre</td>
+						<td>
+							$botones
+						</td>
+					</tr>";
+		}
+
+		$json['data'] = $msg;
+		return $json;
+	}
+
+	function get_arbitro() {
+		$json = array();
+		$db = new medoo();
+		$usuario = $db->select("arbitro", 
+		 					   ["nombres", "id", "correo", "apellidos", "telefono"], ["id"=>$_REQUEST['id']]);
+		$usuario = $usuario[0];
+		$json = $usuario;
+		return $json;
+	}
+
+	function get_equipo() {
+		$json = array();
+		$db = new medoo();
+		$usuario = $db->select("equipo", 
+		 					   ["nombre", "id", "capitan"], ["id"=>$_REQUEST['id']]);
+		$usuario = $usuario[0];
+		$json = $usuario;
+		return $json;
+	}
+
+	function get_users() {
+		$json = array();
+		$db = new medoo();
+		$usuarios = $db->select("usuario", "*");
+		$msg = "<option>Selecciona Capitan</option>";
+		foreach ($usuarios as $user) {
+			$msg .= "<option value='".$user['id']."'>".$user['nombres']." ".$user['apellidos']."</option>";
+		}
+		$json['data'] = $msg;
+
+		return $json;
+	}
+
+	function get_equipos() {
+		$json = array();
+		$db = new medoo();
+		// $usuario = $db->select("arbitro", 
+		// 					   ["nombres", "id", "correo", "apellidos"], ["id[>]"=>0]);
+		$equipos = $db->select("equipo", "*");
+		$msg = "";
+		foreach ($equipos as $equipo) {
+			$nombre = $equipo['nombre'];
+			$id = $equipo['id'];
+			$botones = "<a href='editar/equipo/$id' class='button primary editEqu'>
+							Editar
+						</a>
+						<a href='eliminar/equipo/$id' class='button danger deleteEqu' data-furatto='modal' data-target='#modal-1'>
+							Eliminar
+						</a>";
+			$msg .= "<tr>
+						<td>$nombre</td>
+						<td>
+							$botones
+						</td>
+					</tr>";
+		}
+
+		$json['data'] = $msg;
+		return $json;
+	}
+
+	function add_equipo() {
+		$json = array();
+		$json['title'] = "Guardado";
+		$json['msg'] = "El equipo ha sido guardado con éxito";
+		$json['success'] = true;
+
+		if (!isset($_POST['name']) || empty($_POST['name'])){
+			$json['success'] = false;
+			$json['msg'] = "Nombre(s) no válido(s)";
+		}
+
+		if (!isset($_POST['capitan']) || !is_numeric($_POST['capitan'])){
+			$json['success'] = false;
+			$json['msg'] = "Cápitan no seleccionado";
+		}
+	
+		if (json['success']) {
+			$db = new medoo();
+
+			if (isset($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0){
+ 				$db->update("equipo", 
+ 							[ "nombre" => $_POST['name'],
+							  "capitan" => $_POST['capitan']
+							], 
+							["id"=>$_POST['id']]);
+ 			}else {
+				$last_user_id = $db->insert("equipo", [
+											"nombre" => $_POST['name'],
+											"capitan" => $_POST['capitan']
+										]);
+				//$usuario = $usuario[0];
+				if (is_numeric($last_user_id)) {
+					$url = "";
+				}else {
+					$json['error'] = true;
+					$json['msg'] = "Usuario y/o contraseña no válidos";
+				}
+			}
+		}
+
+		return $json;
+
+	}
+
+	function add_arbitro() {
+		$json = array();
+		$json['title'] = "Guardado";
+		$json['msg'] = "El arbitro ha sido guardado con éxito";
+		$json['success'] = true;
+		if (!isset($_POST['correo']) || !$this->isEmail($_POST['correo'])) {
+			$json['error'] = true;
+			$json['msg'] = "E-mail no válido";
+		}
+
+		if (!isset($_POST['name']) || empty($_POST['name'])){
+			$json['error'] = true;
+			$json['msg'] = "Nombre(s) no válido(s)";
+		}
+
+		if (!isset($_POST['lastname']) || empty($_POST['lastname'])){
+			$json['error'] = true;
+			$json['msg'] = "Apellido(s) no válido(s)";
+		}
+
+		if (!isset($_POST['telefono']) || empty($_POST['telefono'])){
+			$json['error'] = true;
+			$json['msg'] = "Teléfono no válido";
+		}
+
+		if (!$json['error']) {
+			$db = new medoo();
+ 			
+ 			if (isset($_POST['id']) && is_numeric($_POST['id']) && $_POST['id'] > 0){
+ 				$db->update("arbitro", 
+ 							[ "nombres" => $_POST['name'],
+							  "apellidos" => $_POST['lastname'],
+							  "correo" => $_POST['correo'],
+							  "telefono" => $_POST['telefono']
+							], 
+							["id"=>$_POST['id']]);
+ 			}else {
+ 				$last_user_id = $db->insert("arbitro", [
+											"nombres" => $_POST['name'],
+											"apellidos" => $_POST['lastname'],
+											"correo" => $_POST['correo'],
+											"telefono" => $_POST['telefono']
+										]);
+				//$usuario = $usuario[0];
+				if (is_numeric($last_user_id)) {
+					$url = "";
+				}else {
+					$json['error'] = true;
+					$json['msg'] = "Usuario y/o contraseña no válidos";
+				}
+ 			}
+ 			$json['success'] = !$json['error'];
+		}
+
+		return $json;
+	}
+
+	function delete_arbitro() {
+		$json = array();
+		$json['title'] = "Borrado";
+		$json['msg'] = "El arbitro ha sido borrado con éxito";
+		$json['success'] = true;
+
+		if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+			$db = new medoo();
+			$db->delete("arbitro", [
+							"id" => $_GET['id']
+						]);
+		}
+
+		return $json;
+	}
+
+	function delete_equipo() {
+		$json = array();
+		$json['title'] = "Borrado";
+		$json['msg'] = "El equipo ha sido borrado con éxito";
+		$json['success'] = true;
+
+		if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+			$db = new medoo();
+			$db->delete("equipo", [
+							"id" => $_GET['id']
+						]);
+		}
+
+		return $json;
+	}
+
+	function list_equipos() {
+		$json = array();
+		$db = new medoo();
+		$usuarios = $db->select("equipo", "*");
+		$msg = "<option>Selecciona el equipo</option>";
+		foreach ($usuarios as $user) {
+			$msg .= "<option value='".$user['id']."'>".$user['nombre']."</option>";
+		}
+		$json['data'] = $msg;
+		return $json;
+	}
+
+	function equipo_table() {
+		$json = array();
+		$db = new medoo();
+		$ids = array();
+		$equipo = $db->get("equipo", ["nombre", "capitan"], ["id"=>$_POST['id']]);
+		$json['equipo'] = $equipo['nombre'];
+		$capitan = $equipo['capitan'];
+		$equipos = $db->select("equipo_usuario", ["usuario"], ["equipo"=>$_POST['id']]);
+		$msg = "";
+		foreach ($equipos as $equipo) {
+			$uid = $equipo['usuario'];
+			array_push($ids, $uid);
+			$usuario = $db->get("usuario", ["nombres", "apellidos", "correo"], ["id" => $uid]);
+			$id = $_POST['id'];
+			$botones = "<a href='expulsar/equipo/$id/$uid' class='button danger expulsarUsuario' data-furatto='modal' data-target='#modal-1'>
+							Expulsar
+						</a>".($uid==$capitan?"":"<a href='capitan/equipo/$id/$uid' class='button primary makeCapitan'>
+							Hacer Capitan
+						</a>");
+			$nombre = $usuario['nombres']." ".$usuario['apellidos'].($uid==$capitan?" [c]":"");
+			$correo = $usuario['correo'];
+			$msg .= "<tr>
+						<td>$nombre</td>
+						<td>$correo</td>
+						<td>
+							$botones
+						</td>
+					</tr>";
+		}
+
+		$usuarios = $db->select("usuario", "*");
+		$sel = "<option>Selecciona Jugador</option>";
+		foreach ($usuarios as $usuario) {
+			if (!in_array($usuario['id'], $ids)) {
+				$sel .= "<option value='".$usuario['id']."'>".$usuario['nombres']." ".$usuario['apellidos']." - ".$usuario['correo']."</option>";
+			}
+		}
+		$json['select'] = $sel;
+		$json['data'] = $msg;
+		return $json;
+	}
+
+	function push_equipo() {
+		$json = array();
+		$json['title'] = "Agregado";
+		$json['msg'] = "El jugador ha sido agregado con éxito";
+		$json['success'] = true;
+
+		if (json['success']) {
+			$db = new medoo();
+
+			$last_user_id = $db->insert("equipo_usuario", [
+										"equipo" => $_POST['equipo'],
+										"usuario" => $_POST['jugador']
+									]);
+			//$usuario = $usuario[0];
+			if (is_numeric($last_user_id)) {
+				$url = "";
+			}else {
+				$json['error'] = true;
+				$json['msg'] = "Usuario y/o contraseña no válidos";
+			}
+		}
+
+		return $json;
+
+	}
+
+	function pop_equipo() {
+		$json = array();
+		$json['title'] = "Expulsado";
+		$json['msg'] = "El jugador ha sido expulsado con éxito";
+		$json['success'] = true;
+
+		if (json['success']) {
+			$db = new medoo();
+
+			$db->delete("equipo_usuario", [
+							"AND"=>[
+								"usuario" => $_GET['uid'],
+								"equipo" => $_GET['id']
+								]
+						]);
+
+		}
+
+		return $json;
+	}
+
+	function capi_equipo() {
+		$json = array();
+		$json['title'] = "Expulsado";
+		$json['msg'] = "El jugador ha sido expulsado con éxito";
+		$json['success'] = true;
+
+		if (json['success']) {
+			$db = new medoo();
+
+			$db->update("equipo", 
+						[
+							"capitan" => $_GET['uid']
+						],
+						[
+							"id" => $_GET['id']
+						]);
+
+		}
+
+		return $json;
+	}
+
 	function gen_dates() {
-		$json = array("title" => );
+		$json = array("title" => "");
 		return json;
 	}
 
@@ -264,6 +610,48 @@ if (isset($_GET["accion"])) {
 			break;
 		case 'gendates':
 			$json = $libs->gen_dates();
+			break;
+		case 'getarbitros':
+			$json = $libs->get_arbitros();
+			break;
+		case 'getarbitro':
+			$json = $libs->get_arbitro();
+			break;
+		case 'getequipo':
+			$json = $libs->get_equipo();
+			break;
+		case 'getusers':
+			$json = $libs->get_users();
+			break;
+		case 'getequipos':
+			$json = $libs->get_equipos();
+			break;
+		case 'addarbitro':
+			$json = $libs->add_arbitro();
+			break;
+		case 'addequipo':
+			$json = $libs->add_equipo();
+			break;
+		case 'deletearbitro':
+			$json = $libs->delete_arbitro();
+			break;
+		case 'deleteequipo':
+			$json = $libs->delete_equipo();
+			break;
+		case 'listequipos':
+			$json = $libs->list_equipos();
+			break;
+		case 'equipotable':
+			$json = $libs->equipo_table();
+			break;
+		case 'pushequipo':
+			$json = $libs->push_equipo();
+			break;
+		case 'popequipo':
+			$json = $libs->pop_equipo();
+			break;
+		case 'capiequipo':
+			$json = $libs->capi_equipo();
 			break;
 		default:
 			$json = array("error" => true, "msg" => "Not found.");
