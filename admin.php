@@ -29,6 +29,11 @@
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <style type="text/css">
+      .clear {
+        clear: both;
+      }
+    </style>
   </head>
   <body style="">
 
@@ -333,7 +338,7 @@
             </div>
             <div class="content" id="sixthContent">
               <div class="row">
-                <form method="get/day" id="getday">
+                <form action="get/day" id="getday">
                   <label for="year">Año</label>
                   <select name="year" id="gyear">
                     <?php
@@ -370,551 +375,68 @@
                   <input type="submit" value="Obtener" class="button primary">
                 </form>
               </div>
+              <div class="row" id="agendar" style="display:none">
+                <form action="agendar/partido" id="agendarpartido">
+                  <label for="local">Local</label>
+                  <select name="local" id="local">
+                    
+                  </select>
+                  <label for="visitante">Visitante</label>
+                  <select name="visitante" id="visitante">
+                    <option>Seleccione primero local</option>
+                  </select>
+                  <label for="cancha">Cancha</label>
+                  <select name="cancha" id="acancha">
+                    
+                  </select>
+                  <label for="horario">Horario</label>
+                  <select name="horario" id="horario">
+                    <option value="8">8:00 - 9:00</option>
+                    <option value="9">9:00 - 10:00</option>
+                    <option value="10">10:00 - 11:00</option>
+                    <option value="11">11:00 - 12:00</option>
+                    <option value="12">12:00 - 13:00</option>
+                    <option value="13">13:00 - 14:00</option>
+                    <option value="14">14:00 - 15:00</option>
+                    <option value="15">15:00 - 16:00</option>
+                    <option value="16">16:00 - 17:00</option>
+                    <option value="17">17:00 - 18:00</option>
+                    <option value="18">18:00 - 19:00</option>
+                    <option value="19">19:00 - 20:00</option>
+                  </select>
+                  <label for="arbitro">Arbitro</label>
+                  <select name="arbitro" id="sarbitro">
+                    
+                  </select>
+                  <input type="submit" value="Agendar" class="button primary" data-furatto="modal" data-target="#modal-1">
+                </form>
+              </div>
+              <div class="row" id="resultado" style="display:none">
+                <form action="resultado/partido" id="resultadopartido">
+                  <div class="row">
+                    <div class="row">
+                      <div class="col-2">
+                        <label for="partido">Partido</label>
+                        <input type="number" value="0" name="partido" id="partido" min="0" step="1" readonly>  
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-3">
+                        <label for="local">Local</label>
+                        <strong id="taglocal"></strong>
+                        <input type="number" value="" name="local" id="rlocal" min="0" step="1">  
+                      </div>
+                      <div class="col-3">
+                        <label for="visitante">Visitante</label>
+                        <strong id="tagvisitante"></strong>
+                        <input type="number" value="" name="visitante" id="rvisitante" min="0" step="1">  
+                      </div>
+                    </div>
+                  </div>
+                  <input type="submit" value="Guardar" class="button primary">
+                </form>
+              </div>
               <div class="row" id="canchas">
-                <div class="col-6">
-                  <table>
-                    <thead>
-                      <tr>
-                        <td colspan="3">
-                          Fútbol rápido - A
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>
-                          Hora
-                        </th>
-                        <th>
-                          Partido
-                        </th>
-                        <th>
-                          Acciones
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          8:00 - 9:00
-                        </td>
-                        <td>
-                          Coras vs Necaxa
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button danger">Cancelar</a>
-                          <a href="cancelar" class="button primary">Re-agendar</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          9:00 - 10:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          10:00 - 11:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          11:00 - 12:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          12:00 - 13:00
-                        </td>
-                        <td>
-                          Tigres vs Toluca
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button danger">Cancelar</a>
-                          <a href="cancelar" class="button primary">Re-agendar</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          14:00 - 15:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          15:00 - 16:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          17:00 - 18:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          18:00 - 19:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          19:00 - 20:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div class="col-6">
-                  <table>
-                    <thead>
-                      <tr>
-                        <td colspan="3">
-                          Fútbol rápido - A
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>
-                          Hora
-                        </th>
-                        <th>
-                          Partido
-                        </th>
-                        <th>
-                          Acciones
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          8:00 - 9:00
-                        </td>
-                        <td>
-                          Coras vs Necaxa
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button danger">Cancelar</a>
-                          <a href="cancelar" class="button primary">Re-agendar</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          9:00 - 10:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          10:00 - 11:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          11:00 - 12:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          12:00 - 13:00
-                        </td>
-                        <td>
-                          Tigres vs Toluca
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button danger">Cancelar</a>
-                          <a href="cancelar" class="button primary">Re-agendar</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          14:00 - 15:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          15:00 - 16:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          17:00 - 18:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          18:00 - 19:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          19:00 - 20:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div class="col-6">
-                  <table>
-                    <thead>
-                      <tr>
-                        <td colspan="3">
-                          Fútbol rápido - A
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>
-                          Hora
-                        </th>
-                        <th>
-                          Partido
-                        </th>
-                        <th>
-                          Acciones
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          8:00 - 9:00
-                        </td>
-                        <td>
-                          Coras vs Necaxa
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button danger">Cancelar</a>
-                          <a href="cancelar" class="button primary">Re-agendar</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          9:00 - 10:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          10:00 - 11:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          11:00 - 12:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          12:00 - 13:00
-                        </td>
-                        <td>
-                          Tigres vs Toluca
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button danger">Cancelar</a>
-                          <a href="cancelar" class="button primary">Re-agendar</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          14:00 - 15:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          15:00 - 16:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          17:00 - 18:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          18:00 - 19:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          19:00 - 20:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                <div class="col-6">
-                  <table>
-                    <thead>
-                      <tr>
-                        <td colspan="3">
-                          Fútbol rápido - A
-                        </td>
-                      </tr>
-                      <tr>
-                        <th>
-                          Hora
-                        </th>
-                        <th>
-                          Partido
-                        </th>
-                        <th>
-                          Acciones
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          8:00 - 9:00
-                        </td>
-                        <td>
-                          Coras vs Necaxa
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button danger">Cancelar</a>
-                          <a href="cancelar" class="button primary">Re-agendar</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          9:00 - 10:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          10:00 - 11:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          11:00 - 12:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          12:00 - 13:00
-                        </td>
-                        <td>
-                          Tigres vs Toluca
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button danger">Cancelar</a>
-                          <a href="cancelar" class="button primary">Re-agendar</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          14:00 - 15:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          15:00 - 16:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          17:00 - 18:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          18:00 - 19:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>
-                          19:00 - 20:00
-                        </td>
-                        <td>
-                          Libre
-                        </td>
-                        <td>
-                          <a href="cancelar" class="button primary">Agendar partido</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
               </div>
             </div>
         </div>
@@ -932,6 +454,7 @@
 
         getArbitros();
         getEquipos();
+        getCanchas();
 
         $(document).on('click', '#btnGetCal', function() {
           $('#gendates').submit();
@@ -963,6 +486,25 @@
           e.preventDefault();
           globalUrl = $(this).attr("href");
           confirmar("Borrar", "¿Seguro que deseas borrar? Esta acción es <b>permanente</b>");
+        });
+
+        $(document).on('click', '.cancelPartido', function(e) {
+          e.preventDefault();
+          var cancel = confirm("¿Seguro que deseas cancelar el partido?");
+          if (cancel) {
+            $.ajax({
+              url: $(this).attr("href"),
+              data: {'year': $('#gyear').val(), 'month': $('#gmonth').val(), 'day': $('#gday').val()},
+              dataType: 'JSON',
+              type: 'POST',
+              error: function() {
+                fallasTecnicas();
+              },
+              success: function(result) {
+                $('#getday').submit();
+              }
+            });
+          }
         });
 
         $(document).on('click', '.editArb', function(e) {
@@ -1018,6 +560,35 @@
               $('#equipo').trigger("change");
             }
           });
+        });
+
+        $(document).on('click', '.agendarPartido', function (e) {
+          $('#agendar').fadeIn();
+          $('#resultado').fadeOut();
+          $('#acancha').val($(this).attr("data-cancha"));
+          $('#horario').val($(this).attr("data-hora"));
+        });
+
+        $(document).on('change', '#local', function() {
+          $.ajax({
+            url: 'equipos/usuarios',
+            dataType: 'json',
+            type: 'POST',
+            data: {'excepto': $(this).val()},
+            error: function () {
+              fallasTecnicas();
+            }, success: function (result) {
+              $('#visitante').html(result.data);
+            }
+          });
+        });
+
+        $(document).on('click', '.resultadoPartido', function () {
+          $('#resultado').fadeIn();
+          $('#agendar').hide();
+          $('#partido').val($(this).attr("data-partido"));
+          $('#taglocal').html($(this).attr("data-local"));
+          $('#tagvisitante').html($(this).attr("data-visitante"));
         });
 
         $(document).on('change', '#equipo', function () {
@@ -1137,6 +708,26 @@
           });
         });
 
+        $('#resultadopartido').submit(function (e) {
+          e.preventDefault();
+          $.ajax({
+            url: $(this).attr("action"),
+            type: 'POST',
+            data: $(this).serialize(),
+            dataType: 'JSON',
+            error: function () {
+              fallasTecnicas();
+            },
+            success: function(result) {
+              popUp(result.title, result.msg);
+              if (result.success) {
+                $('#getday').submit();
+                $('#resultado').hide();
+              }
+            }
+          });
+        });
+
         $('#pushequipo').submit(function (e) {
           e.preventDefault();
           $.ajax({
@@ -1155,6 +746,49 @@
             }
           });
         });
+
+        $('#getday').submit(function (e) {
+          e.preventDefault();
+          $.ajax({
+            url: $(this).attr("action"),
+            type: 'POST',
+            data: $(this).serialize(),
+            dataType: 'JSON',
+            error: function () {
+              fallasTecnicas();
+            },
+            success: function(result) {
+              $('#canchas').html(result.data);
+            }
+          });
+        });
+
+        $('#agendarpartido').submit(function (e) {
+          e.preventDefault();
+          $.ajax({
+            url: $(this).attr("action"),
+            type: 'POST',
+            data: {'year': $('#gyear').val(),
+                   'month': $('#gmonth').val(),
+                   'day': $('#gday').val(),
+                   'arbitro': $('#sarbitro').val(),
+                   'local': $('#local').val(),
+                   'visitante': $('#visitante').val(),
+                   'cancha': $('#acancha').val(),
+                   'horario': $('#horario').val()},
+            dataType: 'JSON',
+            error: function () {
+              fallasTecnicas();
+            },
+            success: function(result) {
+              popUp(result.title, result.msg);
+              if (result.success) {
+                $('#getday').submit();
+              }
+            }
+          });
+        });
+
       });
 
       function getArbitros() {
@@ -1166,6 +800,7 @@
           },
           success: function (result) {
             $('#arbitros tbody').html(result.data);
+            $('#sarbitro').html(result.select);
           }
         });
       }
@@ -1199,9 +834,24 @@
             fallasTecnicas();
           }, success: function (result) {
             $('#equipo').html(result.data);
+            $('#local').html(result.data);
           }
         });
       }
+
+      function getCanchas() {
+        $.ajax({
+          url: 'get/canchas',
+          dataType: 'JSON',
+          error: function () {
+            fallasTecnicas();
+          },
+          success: function (result) {
+            $('#acancha').html(result.data);
+          }
+        });
+      }
+
       function refreshArbitros() {
         $('.addArb').show();
         $('.formArb').hide();

@@ -23,8 +23,14 @@ RewriteRule ^equipos/usuarios$ include/Libs.php?accion=listequipos
 RewriteRule ^equipos/table$ include/Libs.php?accion=equipotable
 RewriteRule ^add/arbitro$ include/Libs.php?accion=addarbitro
 RewriteRule ^add/equipo$ include/Libs.php?accion=addequipo
+RewriteRule ^agendar/partido$ include/Libs.php?accion=agendarpartido
+RewriteRule ^resultado/partido$ include/Libs.php?accion=resultadopartido
+RewriteRule ^get/day$ include/Libs.php?accion=getHorarioCanchas
+RewriteRule ^get/canchas$ include/Libs.php?accion=getcanchas
+RewriteRule ^capitan/juegos$ include/Libs.php?accion=getjuegoscapitan
 RewriteRule ^eliminar/arbitro/([0-9]+)$ include/Libs.php?accion=deletearbitro&id=$1 [L,NC]
 RewriteRule ^eliminar/equipo/([0-9]+)$ include/Libs.php?accion=deleteequipo&id=$1 [L,NC]
 RewriteRule ^expulsar/equipo/([0-9]+)/([0-9]+)$ include/Libs.php?accion=popequipo&id=$1&uid=$2 [L,NC]
 RewriteRule ^capitan/equipo/([0-9]+)/([0-9]+)$ include/Libs.php?accion=capiequipo&id=$1&uid=$2 [L,NC]
+RewriteRule ^cancelar/partido/([0-9]+)/([0-9]+)$ include/Libs.php?accion=cancelarpartido&cancha=$1&hora=$2 [L,NC]
 RewriteRule ^confirmar$ include/Libs.php?accion=confirmar

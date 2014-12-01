@@ -53,55 +53,78 @@
 
     <div class="row">
       <div class="col-10 offset-1">
-      <h2>Tus juegos</h2>
-      <table class="responsive">
-       <thead>
-         <tr>
-           <th>Cancha</th>
-           <th>Equipo</th>
-           <th>Día</th>
-           <th>Horario</th>
-           <th>Arbitro</th>
-           <th>Acciones</th>
-         </tr>
-       </thead>
-       <tbody>
-         <tr>
-           <td>1</td>
-           <td>Supercampeones</td>
-           <td>20 Noviembre 2014</td>
-           <td>7:30 - 9:00</td>
-           <td>Roberto García Orozco</td>
-           <td>
-             <a href="./reagendar/1" class="button warning">Re-agendar</a>
-             <a href="./cancelar/1" class="button danger">Cancelar</a>
-           </td>
-         </tr>
-         <tr>
-           <td>2</td>
-           <td>Neutrinos</td>
-           <td>24 Noviembre 2014</td>
-           <td>9:00 - 10:30</td>
-           <td>Felipe Ramos Rizo</td>
-           <td>
-             <a href="./reagendar/1" class="button warning">Re-agendar</a>
-             <a href="./cancelar/1" class="button danger">Cancelar</a>
-           </td>
-         </tr>
-         <tr>
-           <td>1</td>
-           <td>Supercampeones</td>
-           <td>28 Noviembre 2014</td>
-           <td>7:30 - 9:00</td>
-           <td>Chiquimarco</td>
-           <td>
-             <a href="./reagendar/1" class="button warning">Re-agendar</a>
-             <a href="./cancelar/1" class="button danger">Cancelar</a>
-           </td>
-         </tr>
-       </tbody>
-    </table>
-    </div>
+        <h2>Tus juegos como Capitan</h2>
+        <table class="responsive" id="capitan">
+         <thead>
+           <tr>
+             <th>Cancha</th>
+             <th>Equipo</th>
+             <th>Día</th>
+             <th>Horario</th>
+             <th>Arbitro</th>
+             <th>Acciones</th>
+           </tr>
+         </thead>
+         <tbody>
+           <tr>
+             <td>1</td>
+             <td>Supercampeones</td>
+             <td>20 Noviembre 2014</td>
+             <td>7:30 - 9:00</td>
+             <td>Roberto García Orozco</td>
+             <td>
+               <a href="./reagendar/1" class="button warning">Re-agendar</a>
+               <a href="./cancelar/1" class="button danger">Cancelar</a>
+             </td>
+           </tr>
+           <tr>
+             <td>2</td>
+             <td>Neutrinos</td>
+             <td>24 Noviembre 2014</td>
+             <td>9:00 - 10:30</td>
+             <td>Felipe Ramos Rizo</td>
+             <td>
+               <a href="./reagendar/1" class="button warning">Re-agendar</a>
+               <a href="./cancelar/1" class="button danger">Cancelar</a>
+             </td>
+           </tr>
+           <tr>
+             <td>1</td>
+             <td>Supercampeones</td>
+             <td>28 Noviembre 2014</td>
+             <td>7:30 - 9:00</td>
+             <td>Chiquimarco</td>
+             <td>
+               <a href="./reagendar/1" class="button warning">Re-agendar</a>
+               <a href="./cancelar/1" class="button danger">Cancelar</a>
+             </td>
+           </tr>
+         </tbody>
+        </table>
+      </div>
+      <div class="col-10 offset-1">
+        <h2>Tus otros juegos</h2>
+        <table class="responsive">
+          <thead>
+            <tr>
+              <th>Cancha</th>
+              <th>Equipo</th>
+              <th>Día</th>
+              <th>Horario</th>
+              <th>Arbitro</th>
+             </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>Supercampeones</td>
+              <td>28 Noviembre 2014</td>
+              <td>7:30 - 9:00</td>
+              <td>Chiquimarco</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
 
@@ -109,7 +132,18 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/furatto.min.js"></script>
     <script type="text/javascript" charset="utf-8">
-
+      $(document).ready(function() {
+        $.ajax({
+          url: 'capitan/juegos',
+          dataType: 'JSON',
+          error: function() {
+            alert("Experimentamos fallas técnicas");
+          },
+          success: function(result) {
+            $('#capitan tbody').html(result.data);
+          }
+        });
+      });
     </script>
     <!--a link element to trigger the modal-->
 

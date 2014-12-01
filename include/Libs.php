@@ -4,6 +4,7 @@
 */
 session_start();
 setlocale(LC_ALL, "es_ES");
+date_default_timezone_set('America/Mexico_City');
 include_once("medoo.min.php");
 class Libs
 {
@@ -245,9 +246,11 @@ class Libs
 		// 					   ["nombres", "id", "correo", "apellidos"], ["id[>]"=>0]);
 		$usuario = $db->select("arbitro", "*");
 		$msg = "";
+		$select = "";
 		foreach ($usuario as $user) {
 			$nombre = $user['nombres']." ".$user['apellidos'];
 			$id = $user['id'];
+			$select .= "<option value='$id'>$nombre</option>";
 			$botones = "<a href='editar/arbitro/$id' class='button primary editArb'>
 							Editar
 						</a>
@@ -263,6 +266,7 @@ class Libs
 		}
 
 		$json['data'] = $msg;
+		$json['select'] = $select;
 		return $json;
 	}
 
@@ -466,7 +470,9 @@ class Libs
 		$usuarios = $db->select("equipo", "*");
 		$msg = "<option>Selecciona el equipo</option>";
 		foreach ($usuarios as $user) {
-			$msg .= "<option value='".$user['id']."'>".$user['nombre']."</option>";
+			if (!isset($_POST['excepto']) || $_POST['excepto'] != $user['id']) {
+				$msg .= "<option value='".$user['id']."'>".$user['nombre']."</option>";
+			}
 		}
 		$json['data'] = $msg;
 		return $json;
@@ -583,9 +589,299 @@ class Libs
 		return $json;
 	}
 
-	function gen_dates() {
-		$json = array("title" => "");
-		return json;
+	function get_horario_canchas() {
+		$json = array();
+		$table = "";
+		if (!isset($_POST['year']) || empty($_POST['year']) || !isset($_POST['month']) || empty($_POST['month']) || !isset($_POST['day']) || empty($_POST['day'])) {
+			$json['error'] = true;
+			$json['msg'] = "Fecha no válida";
+		}
+
+		if (!$json['error']) {
+			$db = new medoo();
+			$date = $_POST['year']."-".$_POST['month']."-".str_pad($_POST['day'], 2, "0", STR_PAD_LEFT);
+			$horas = array(8,9,10,11,12,13,14,15,16,17,18,19);
+			$canchas = $db->select("cancha", "*");
+			foreach ($canchas as $key => $cancha) {
+				$tipo = $db->get("tipo_cancha", ["nombre"], ["id"=>$cancha['tipo']]);
+				$tipo = $tipo['nombre'];
+				$cid = $cancha['nombre'];
+				$nombre = "Cancha: ".$tipo." - ".$cid;
+				$table .= "<div class='col-6'>
+							<table>
+								<thead>
+			                      <tr>
+			                        <td colspan='3'>
+			                          $nombre
+			                        </td>
+			                      </tr>
+			                      <tr>
+			                        <th>
+			                          Hora
+			                        </th>
+			                        <th>
+			                          Partido
+			                        </th>
+			                        <th>
+			                          Acciones
+			                        </th>
+			                      </tr>
+			                    </thead>
+			                    <tbody>";
+				foreach ($horas as $hora) {
+
+					$inicio = date("Y-m-d H:i:s", mktime($hora, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']));
+					$fin = date("Y-m-d H:i:s", mktime($hora + 1, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']));
+					$hoy = date("Y-m-d H:i:s");
+					$json['ahorita'] = $hoy;
+					$timeslot = $db->get("partido", "*", ["AND" => ["cancha" => $cancha['id'], "hora_inicio" => $inicio, "hora_fin" => $fin, "estatus[!]" => 0]]);
+					if (empty($timeslot)){
+						$table .= "<tr>
+							<td class='col-4'>
+							".date("H:i",mktime($hora, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']))." - ".date("H:i", mktime($hora+1, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']))."
+							</td>
+							<td class='col-4'>".($inicio < $hoy?"No utilizado":"Libre")."</td>
+							<td class='col-4'>
+								".($inicio < $hoy?"":"<a href='#agendar' class='button primary agendarPartido' data-hora='$hora' data-cancha='".$cancha['id']."' >Agendar partido</a>")."
+							</td>
+						</tr>";
+					}else {
+						$equipo1 = $db->get("equipo", "*", ["id" => $timeslot['local']]);
+						$equipo2 = $db->get("equipo", "*", ["id" => $timeslot['visitante']]);
+						if(!empty($timeslot['resultado'])){
+							$goles = explode("|", $timeslot['resultado']);
+						}
+						$table .= "<tr>
+							<td class='col-4'>
+							".date("H:i",mktime($hora, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']))." - ".date("H:i", mktime($hora+1, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']))."
+							</td>
+							<td class='col-4'>
+								".(isset($goles[0])?"<b>".$goles[0]."</b> ":"").$equipo1['nombre']." vs ".$equipo2['nombre'].(isset($goles[1])?" <b>".$goles[1]."</b>":"")."
+							</td>
+							<td class='col-4'>";
+								
+						if ($inicio > $hoy) {
+							$table .= "<a href='cancelar/partido/".$cancha['id']."/".$hora."' class='button danger cancelPartido'>Cancelar partido</a>";
+						}else if(empty($timeslot['resultado'])){
+							$table .= "<a href='#resultadopartido' class='button warning resultadoPartido' data-partido='".$timeslot['id']."' data-local='".$equipo1['nombre']."' data-visitante='".$equipo2['nombre']."'>Resultado partido</a>";
+						}
+								
+						$table .= "</td>
+							</tr>";
+					}
+				}
+				$table .= "</tbody>
+						</table>
+					</div>";
+				if ($key%2 != 0) {
+					$table .= "<div class='clear'></div>";
+				}
+			} //end foreach canchas
+		}
+		$json['data'] = $table;
+		return $json;
+	}
+
+	function cancelar_partido() {
+		$json = array();
+		if (!isset($_POST['year']) || empty($_POST['year']) || !isset($_POST['month']) || empty($_POST['month']) || !isset($_POST['day']) || empty($_POST['day'])) {
+			$json['error'] = true;
+			$json['msg'] = "Fecha no válida";
+		}
+
+		if (!$json['error']) {
+			$db = new medoo();
+			$hora = $_GET['hora'];
+			$date = $_POST['year']."-".$_POST['month']."-".str_pad($_POST['day'], 2, "0", STR_PAD_LEFT);
+			$inicio = date("Y-m-d H:i:s", mktime($hora, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']));
+			$fin = date("Y-m-d H:i:s", mktime($hora + 1, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']));
+			$count = $db->update("partido", 
+						["estatus" => 0], 
+						["AND" => ["cancha" => $_GET['cancha'], 
+								   "fecha" => $date, 
+								   "hora_inicio" => $inicio, 
+								   "hora_fin" => $fin]
+						]);
+		}
+
+		return $json;
+	}
+
+	function get_canchas() {
+		$json = array();
+		$db = new medoo();
+		$canchas = $db->select("cancha", 
+							   ["[>]tipo_cancha" => ["tipo" => "id"]],
+							   ["cancha.id", 
+							   	"cancha.nombre(nombre)", 
+							   	"tipo_cancha.nombre(tipo)"],
+							   	["cancha.id[>]" => 0]);
+		$select = "";
+		foreach ($canchas as $cancha) {
+			$select .= "<option value='".$cancha['id']."'>".$cancha['tipo']." - ".$cancha['nombre']."</option>";
+		}
+		$json['data'] = $select;
+		return $json;
+	}
+
+	function agendar_partido() {
+		$json = array('success' => true, 'msg' => 'Agendado con éxito', 'title' => 'Agendado');
+
+        if (!isset($_POST['year']) || empty($_POST['year']) || !isset($_POST['month']) || empty($_POST['month']) || !isset($_POST['day']) || empty($_POST['day'])) {
+        	$json['success'] = false;
+        	$json['title'] = "Error";
+        	$json['msg'] = "Fecha no válida";
+        }
+
+        if (!isset($_POST['arbitro']) || empty($_POST['arbitro'])) {
+        	$json['success'] = false;
+        	$json['title'] = "Error";
+        	$json['msg'] = "Arbitro no seleccionado";
+        }
+
+        if (!isset($_POST['local']) || empty($_POST['local'])) {
+        	$json['success'] = false;
+        	$json['title'] = "Error";
+        	$json['msg'] = "Equipo local no seleccionado";
+        }
+
+        if (!isset($_POST['visitante']) || empty($_POST['visitante'])) {
+        	$json['success'] = false;
+        	$json['title'] = "Error";
+        	$json['msg'] = "Equipo visitante no seleccionado";
+        }
+
+        if (!isset($_POST['cancha']) || empty($_POST['cancha'])) {
+        	$json['success'] = false;
+        	$json['title'] = "Error";
+        	$json['msg'] = "Cancha no seleccionada";
+        }
+
+        if (!isset($_POST['horario']) || empty($_POST['horario'])) {
+        	$json['success'] = false;
+        	$json['title'] = "Error";
+        	$json['msg'] = "Horario no seleccionado";
+        }
+
+        if ($json['success']) {
+        	$db = new medoo();
+        	$hora = $_POST['horario'];
+        	$date = $_POST['year']."-".$_POST['month']."-".str_pad($_POST['day'], 2, "0", STR_PAD_LEFT);
+        	$inicio = date("Y-m-d H:i:s", mktime($hora, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']));
+			$fin = date("Y-m-d H:i:s", mktime($hora + 1, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']));
+			$hoy = date("Y-m-d H:i:s");
+			if ($inicio < $hoy) {
+				$json['success'] = false;
+	        	$json['title'] = "Error";
+	        	$json['msg'] = "Horario del pasado";
+			}else {
+				$timeslot = $db->get("partido", 
+									 "id", 
+									 ["AND" => ["cancha" => $_POST['cancha'], 
+									 		    "hora_inicio" => $inicio, 
+									 		    "hora_fin" => $fin]]);
+				
+				if (!empty($timeslot)) {
+					$json['success'] = false;
+		        	$json['title'] = "Error";
+		        	$json['msg'] = "Horario ya reservado";
+				}else {
+					$vars = array("date" => $date,
+								  "hora_inicio" => $inicio,
+								  "hora_fin" => $fin,
+								  "cancha" => $_POST['cancha'],
+								  "local" => $_POST['local'],
+								  "visitante" => $_POST['visitante'],
+								  "arbitro" => $_POST['arbitro']);
+					// die(print_r($vars));
+					$last_insert_id = $db->insert("partido", 
+												  ["fecha" => $date,
+												   "hora_inicio" => $inicio,
+												   "hora_fin" => $fin,
+												   "cancha" => $_POST['cancha'],
+												   "local" => $_POST['local'],
+												   "visitante" => $_POST['visitante'],
+												   "arbitro" => $_POST['arbitro'],
+												   "estatus" => 1]);
+				}
+			}
+        }
+
+		return $json;
+	}
+
+	function resultado_partido() {
+		$json = array('success' => true, 'msg' => 'Guardado con éxito', 'title' => 'Guardado');
+		
+
+		if ( !isset($_POST['partido']) ||
+			empty($_POST['partido']) ||
+			!isset($_POST['local']) ||
+			empty($_POST['local']) ||
+			!isset($_POST['visitante']) ||
+			empty($_POST['visitante'])
+			) {
+			$json['success'] = false;
+			$json['title'] = "Error";
+			$json['msg'] = "Resultados no válidos";
+		}
+
+		if ($json['success']) {
+			$db = new medoo();
+			$resultado = $_POST['local']."|".$_POST['visitante'];
+			$db->update("partido", ["resultado" => $resultado], ["id" => $_POST['partido']]);
+		}
+
+		return $json;
+	}
+
+	function get_juegos_capitan() {
+		$id = $_SESSION['user']['id'];
+		$db = new medoo();
+		$equipos = $db->select("equipo", "*", ["capitan" => $id]);
+		$table = "";
+		foreach ($equipos as $equipo) {
+			$eid = $equipo['id'];
+			$partidos = $db->select("partido", 
+									"*", 
+									["OR" => ["local" => $eid, "visitante" => $eid]]);
+			
+			foreach ($partidos as $partido) {
+				$cancha = $db->get("cancha", "*", ["id" => $partido['cancha']]);
+				$tipocancha = $db->get("tipo_cancha", "*", ["id" => $cancha["tipo"]]);
+				$local = $db->get("equipo", "*", ["id" => $partido['local']]);
+				$visitante = $db->get("equipo", "*", ["id" => $partido['visitante']]);
+				$arbitro = $db->get("arbitro", "*", ["id" => $partido['arbitro']]);
+				$time = explode(" ", $partido['horario_inicio']);
+				$day = explode("-", $time[0]);
+				$hours = explode(":", $time[1]);
+				$inicio = date("Y-m-d H:i:s", mktime($hours[0], 0, 0, $day[2], $day[1], $day[0]));
+				$hoy = date("Y-m-d H:i:s");
+				$table .= "<tr>";
+				$table .= "<td>".$tipocancha['nombre']." - ".$cancha['nombre']."</td>";
+				$table .= "<td>".$local['nombre']." vs ".$visitante['nombre']."</td>";
+				$table .= "<td>".date("d M Y", strtotime($partido['fecha']))."</td>";
+				$table .= "<td>".date("H:i", strtotime($partido['hora_inicio']))." - ".date("H:i", strtotime("+1 hour", strtotime($partido['hora_inicio'])))."</td>";
+				$table .= "<td>".$arbitro['nombres']." ".$arbitro['apellidos']."</td>";
+				if ($partido["estatus"] == 1 && $hoy >= $inicio) {
+					$table .= "<td>
+								<a href='#cambiarhorario' data-juego='".$partido['id']."' class='button warning'>Re-agendar</a>
+								<a href='cancelar/partido' class='button danger'>Cancelar</a>
+							   </td>";
+				}else {
+					$table .= "<td> ---- </td>";
+				}
+
+				$table .= "</tr>";
+			}
+		}
+		$json['data'] = $table;
+		return $json;
+	}
+
+	function get_juegos() {
+		$json = array();
+		return $json;
 	}
 
 	function isEmail($email){
@@ -652,6 +948,27 @@ if (isset($_GET["accion"])) {
 			break;
 		case 'capiequipo':
 			$json = $libs->capi_equipo();
+			break;
+		case 'getHorarioCanchas':
+			$json = $libs->get_horario_canchas();
+			break;
+		case 'cancelarpartido':
+			$json = $libs->cancelar_partido();
+			break;
+		case 'getcanchas':
+			$json = $libs->get_canchas();
+			break;
+		case 'agendarpartido':
+			$json = $libs->agendar_partido();
+			break;
+		case 'resultadopartido':
+			$json = $libs->resultado_partido();
+			break;
+		case 'getjuegoscapitan':
+			$json = $libs->get_juegos_capitan();
+			break;
+		case 'getjuegos':
+			$json = $libs->get_juegos();
 			break;
 		default:
 			$json = array("error" => true, "msg" => "Not found.");
