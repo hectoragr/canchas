@@ -8,10 +8,7 @@ date_default_timezone_set('America/Mexico_City');
 include_once("medoo.min.php");
 class Libs
 {
-	/*
-	Válida que el usuario exista con su contraseña, y si es Admin lo redirige a la página de admins y
-	agrega un valor a la session
-	*/
+
 	function login_user() {
 		$json = array('error' => false,
 					  'msg' => "Login successful");
@@ -64,10 +61,6 @@ class Libs
 		return $json;
 
 	}
-
-	/*
-	Válida que los datos de un usuario para registrarlo al sistema con correo y contraseña
-	*/
 
 	function sign_up() {
 		$json = array('error' => false,
@@ -124,10 +117,6 @@ class Libs
 		return $json;
 	}
 
-	/*
-	Permite traer la información del usuario que está conectado a través del sesión
-	*/
-
 	function get_user() {
 		if (!isset($_SESSION['user'])) {
 			die("error");
@@ -160,9 +149,7 @@ class Libs
 		return $json;
 
 	}
-	/*
-	Dibuja un calendario en base al mes y año (ya no se usa)
-	*/
+
 	function draw_cal($currM, $currY){
 	    if(!$currM){ $currM = date("m"); }
 	    if(!$currY){ $currY = date("Y"); }
@@ -252,10 +239,6 @@ class Libs
 
 	}
 
-	/*
-	Regresa una tabla con los arbitros, y botones de acciones a realizar sobre el mismo
-	*/
-
 	function get_arbitros() {
 		$json = array();
 		$db = new medoo();
@@ -287,10 +270,6 @@ class Libs
 		return $json;
 	}
 
-	/*
-	Regresa la información de un sólo arbitro
-	*/
-
 	function get_arbitro() {
 		$json = array();
 		$db = new medoo();
@@ -301,9 +280,6 @@ class Libs
 		return $json;
 	}
 
-	/*
-	Regresa la información de un sólo equipo
-	*/
 	function get_equipo() {
 		$json = array();
 		$db = new medoo();
@@ -314,9 +290,6 @@ class Libs
 		return $json;
 	}
 
-	/*
-	Regresa un select con las opciones de usuarios
-	*/
 	function get_users() {
 		$json = array();
 		$db = new medoo();
@@ -330,9 +303,6 @@ class Libs
 		return $json;
 	}
 
-	/*
-	Regresa una tabla con los equipos y acciones a realizar por el administrador sobre el mismo
-	*/
 	function get_equipos() {
 		$json = array();
 		$db = new medoo();
@@ -361,9 +331,6 @@ class Libs
 		return $json;
 	}
 
-	/*
-	Valida la información a utilizar para un equipo y crea uno nuevo, o si ya existe lo actualiza
-	*/
 	function add_equipo() {
 		$json = array();
 		$json['title'] = "Guardado";
@@ -408,9 +375,6 @@ class Libs
 
 	}
 
-	/*
-	Valida la información sobre un arbitro y lo agrega o si ya existe lo actualiza
-	*/
 	function add_arbitro() {
 		$json = array();
 		$json['title'] = "Guardado";
@@ -467,9 +431,7 @@ class Libs
 
 		return $json;
 	}
-	/*
-	Elimina el arbitro especificado
-	*/
+
 	function delete_arbitro() {
 		$json = array();
 		$json['title'] = "Borrado";
@@ -485,9 +447,7 @@ class Libs
 
 		return $json;
 	}
-	/*
-	Elimina el equipo especificado
-	*/
+
 	function delete_equipo() {
 		$json = array();
 		$json['title'] = "Borrado";
@@ -504,9 +464,6 @@ class Libs
 		return $json;
 	}
 
-	/*
-	Regresa un select de opciones de usuarios con su id
-	*/
 	function list_equipos() {
 		$json = array();
 		$db = new medoo();
@@ -520,9 +477,7 @@ class Libs
 		$json['data'] = $msg;
 		return $json;
 	}
-	/*
-	Regresa una tabla con los usuarios de un equipo y acciones para estos usuarios
-	*/
+
 	function equipo_table() {
 		$json = array();
 		$db = new medoo();
@@ -564,9 +519,7 @@ class Libs
 		$json['data'] = $msg;
 		return $json;
 	}
-	/*
-	Agrega un equipo
-	*/
+
 	function push_equipo() {
 		$json = array();
 		$json['title'] = "Agregado";
@@ -592,9 +545,7 @@ class Libs
 		return $json;
 
 	}
-	/*
-	Borra un equipo espcificado
-	*/
+
 	function pop_equipo() {
 		$json = array();
 		$json['title'] = "Expulsado";
