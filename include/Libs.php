@@ -566,7 +566,7 @@ class Libs
 
 		return $json;
 	}
-
+	
 	function capi_equipo() {
 		$json = array();
 		$json['title'] = "Expulsado";
@@ -688,24 +688,21 @@ class Libs
 			$json['error'] = true;
 			$json['msg'] = "Fecha no válida";
 		}
-		$count = 0;
+
 		if (!$json['error']) {
 			$db = new medoo();
 			$hora = $_GET['hora'];
-			$date = $_POST['year']."-".str_pad($_POST['month'], 2, "0", STR_PAD_LEFT)."-".str_pad($_POST['day'], 2, "0", STR_PAD_LEFT);
+			$date = $_POST['year']."-".$_POST['month']."-".str_pad($_POST['day'], 2, "0", STR_PAD_LEFT);
 			$inicio = date("Y-m-d H:i:s", mktime($hora, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']));
 			$fin = date("Y-m-d H:i:s", mktime($hora + 1, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']));
-			$vars = array($_GET['cancha'], $date, $inicio, $fin);
 			$count = $db->update("partido", 
 						["estatus" => 0], 
 						["AND" => ["cancha" => $_GET['cancha'], 
-								    
+								   "fecha" => $date, 
 								   "hora_inicio" => $inicio, 
 								   "hora_fin" => $fin]
 						]);
-			//die(print_r($vars));
 		}
-		$json['data'] = $count;
 
 		return $json;
 	}
