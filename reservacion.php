@@ -212,7 +212,7 @@
                 fallasTecnicas();
               },
               success: function(result) {
-                location.reload();
+                //location.reload();
               }
             });
           }
