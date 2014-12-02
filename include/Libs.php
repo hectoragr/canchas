@@ -661,7 +661,7 @@ class Libs
 							<td class='col-4'>";
 								
 						if ($inicio > $hoy) {
-							$table .= "<a href='cancelar/partido/".$cancha['id']."/".$hora."' class='button danger cancelPartido'>Cancelar partido</a>";
+							$table .= "<a href='cancelar/partido/".$cancha['id']."' class='button danger cancelPartido'>Cancelar partido</a>";
 						}else if(empty($timeslot['resultado'])){
 							$table .= "<a href='#resultadopartido' class='button warning resultadoPartido' data-partido='".$timeslot['id']."' data-local='".$equipo1['nombre']."' data-visitante='".$equipo2['nombre']."'>Resultado partido</a>";
 						}
@@ -692,15 +692,13 @@ class Libs
 		if (!$json['error']) {
 			$db = new medoo();
 			$hora = $_GET['hora'];
-			$date = $_POST['year']."-".$_POST['month']."-".str_pad($_POST['day'], 2, "0", STR_PAD_LEFT);
+			/*$date = $_POST['year']."-".$_POST['month']."-".str_pad($_POST['day'], 2, "0", STR_PAD_LEFT);
 			$inicio = date("Y-m-d H:i:s", mktime($hora, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']));
 			$fin = date("Y-m-d H:i:s", mktime($hora + 1, 0, 0, $_POST['month'], $_POST['day'], $_POST['year']));
-			$count = $db->update("partido", 
+			die(print_r(array($_GET['cancha'], $inicio)));*/
+			$db->update("partido", 
 						["estatus" => 0], 
-						["AND" => ["cancha" => $_GET['cancha'], 
-								   "fecha" => $date, 
-								   "hora_inicio" => $inicio, 
-								   "hora_fin" => $fin]
+						["id" => $_GET["id"]
 						]);
 		}
 
@@ -864,10 +862,10 @@ class Libs
 				$table .= "<td>".date("d M Y", strtotime($partido['fecha']))."</td>";
 				$table .= "<td>".date("H:i", strtotime($partido['hora_inicio']))." - ".date("H:i", strtotime("+1 hour", strtotime($partido['hora_inicio'])))."</td>";
 				$table .= "<td>".$arbitro['nombres']." ".$arbitro['apellidos']."</td>";
-				if ($partido["estatus"] == 1 && $hoy >= $inicio) {
+				if ($partido["estatus"] == 1 && $hoy > $inicio) {
 					$table .= "<td>
 								<a href='#updatejuego' data-juego='".$partido['id']."' class='button warning cambiarJuego'>Re-agendar</a>
-								<a href='cancelar/partido/".$partido['id']."/".date("G", strtotime($partido['hora_inicio']))."' class='button danger cancelPartido'>Cancelar</a>
+								<a href='cancelar/partido/".$partido['id']."' class='button danger cancelPartido'>Cancelar</a>
 							   </td>";
 				}else if($partido["estatus"] == 2) {
 					$table .= "<td> Esperando aprobación de cambio </td>";
@@ -901,24 +899,27 @@ class Libs
 									["OR" => ["local" => $eid, "visitante" => $eid]]);
 			
 			foreach ($partidos as $partido) {
-				$cancha = $db->get("cancha", "*", ["id" => $partido['cancha']]);
-				$tipocancha = $db->get("tipo_cancha", "*", ["id" => $cancha["tipo"]]);
-				$local = $db->get("equipo", "*", ["id" => $partido['local']]);
-				$visitante = $db->get("equipo", "*", ["id" => $partido['visitante']]);
-				$arbitro = $db->get("arbitro", "*", ["id" => $partido['arbitro']]);
-				$time = explode(" ", $partido['horario_inicio']);
-				$day = explode("-", $time[0]);
-				$hours = explode(":", $time[1]);
-				$inicio = date("Y-m-d H:i:s", mktime($hours[0], 0, 0, $day[2], $day[1], $day[0]));
-				$hoy = date("Y-m-d H:i:s");
-				$table .= "<tr>";
-				$table .= "<td>".$tipocancha['nombre']." - ".$cancha['nombre']."</td>";
-				$table .= "<td>".$local['nombre']." vs ".$visitante['nombre']."</td>";
-				$table .= "<td>".date("d M Y", strtotime($partido['fecha']))."</td>";
-				$table .= "<td>".date("H:i", strtotime($partido['hora_inicio']))." - ".date("H:i", strtotime("+1 hour", strtotime($partido['hora_inicio'])))."</td>";
-				$table .= "<td>".$arbitro['nombres']." ".$arbitro['apellidos']."</td>";
+				if($partido['estatus']) {
+					$cancha = $db->get("cancha", "*", ["id" => $partido['cancha']]);
+					$tipocancha = $db->get("tipo_cancha", "*", ["id" => $cancha["tipo"]]);
+					$local = $db->get("equipo", "*", ["id" => $partido['local']]);
+					$visitante = $db->get("equipo", "*", ["id" => $partido['visitante']]);
+					$arbitro = $db->get("arbitro", "*", ["id" => $partido['arbitro']]);
+					$time = explode(" ", $partido['horario_inicio']);
+					$day = explode("-", $time[0]);
+					$hours = explode(":", $time[1]);
+					$inicio = date("Y-m-d H:i:s", mktime($hours[0], 0, 0, $day[2], $day[1], $day[0]));
+					$hoy = date("Y-m-d H:i:s");
+					$table .= "<tr>";
+					$table .= "<td>".$tipocancha['nombre']." - ".$cancha['nombre']."</td>";
+					$table .= "<td>".$local['nombre']." vs ".$visitante['nombre']."</td>";
+					$table .= "<td>".date("d M Y", strtotime($partido['fecha']))."</td>";
+					$table .= "<td>".date("H:i", strtotime($partido['hora_inicio']))." - ".date("H:i", strtotime("+1 hour", strtotime($partido['hora_inicio'])))."</td>";
+					$table .= "<td>".$arbitro['nombres']." ".$arbitro['apellidos']."</td>";
 
-				$table .= "</tr>";
+					$table .= "</tr>";
+				}
+				
 			}
 		}
 
@@ -984,8 +985,8 @@ class Libs
         		}else {
         			$otro = $db->get("usuario", "*", ["id" => $local['capitan']]);
         		}
-        		$urlacepto = "http://".$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT']."/canchas/cambio/".$otro['id']."/".sha1($_POST['id']."-".$_SESSION['user']['id'])."/yes";
-        		$urlcancel = "http://".$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT']."/canchas/cambio/".$otro['id']."/".sha1($_POST['id']."-".$_SESSION['user']['id'])."/no";
+        		$urlacepto = "http://".$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT']."/canchas/cambio/canchas/".$otro['id']."/".sha1($_POST['id']."-".$_SESSION['user']['id'])."/yes";
+        		$urlcancel = "http://".$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT']."/canchas/cambio/canchas/".$otro['id']."/".sha1($_POST['id']."-".$_SESSION['user']['id'])."/no";
         		$mail = $otro['correo'];
         		$titulo = "Solicitud de cambio";
         		$mensaje = "<hmtl>
@@ -1009,7 +1010,7 @@ class Libs
 
         		$cabeceras  = 'MIME-Version: 1.0' . "\r\n";
 				$cabeceras .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-				@mail($mail, $titulo, $mensaje, $cabeceras);
+				mail($mail, $titulo, $mensaje, $cabeceras);
         		$db->update("partido", ["hora_inicio" => $inicio, "hora_fin" => $fin, "fecha" => $date, "cancha" => $_POST['cancha'], "estatus" => 2], ["id" => $_POST['id']]);
 
         	}
@@ -1021,13 +1022,22 @@ class Libs
 	function set_cambio() {
 		$db = new medoo();
 		$cambio = $db->get("cambio", "*", ["link" => $_GET['link']]);
-
+		$base = "http://".$_SERVER['SERVER_NAME'].":8080/canchas";
 		if ($_GET['resp'] == "yes") {
 			$db->update("partido", ["estatus" => 1], ["id" => $cambio['partido']]);
 			$db->update("cambio", ["aprobado" => $_GET['uid']], ["id"=> $cambio['id']]);
-			die("Cambio realizado");
+			header("Location: ".$base."/exito");
 		}else {
-			die("Fuuuu");
+			$hora_inicio = date("Y-m-d H:i:s", $cambio['viejo_horario']);
+			$date = explode(" ", $cambio['viejo_horario']);
+			$times = explode(":", $date[1]);
+			$dates = explode("-", $date[0]);
+			$hora_inicio =  date("Y-m-d H:i:s", mktime($times[0], 0, 0, $dates[1], $dates[2], $dates[0]));
+			$hora_fin = date("Y-m-d H:i:s", mktime($times[0]+1, 0, 0, $dates[1], $dates[2], $dates[0]));
+			$fecha = date("Y-m-d", mktime($times[0], 0, 0, $dates[1], $dates[2], $dates[0]));
+			$cancha = $cambio['vieja_cancha'];
+			$db->update("partido", ["hora_inicio" => $hora_inicio, "hora_fin" => $hora_fin, "fecha" => $fecha, "cancha"=> $cancha, "estatus" => 1], ["id" => $cambio['partido']]);
+			header("Location: ".$base."/denied");
 		}
 	}
 

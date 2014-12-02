@@ -9,6 +9,8 @@ RewriteRule ^booking$ reservacion.php
 RewriteRule ^login$ login.html
 RewriteRule ^registro$ signup.html
 RewriteRule ^profile$ profile.php
+RewriteRule ^exito$ exito.html
+RewriteRule ^denied$ denied.html
 RewriteRule ^login/user$ include/Libs.php?accion=login
 RewriteRule ^signup/user$ include/Libs.php?accion=signup
 RewriteRule ^get/user$ include/Libs.php?accion=getuser
@@ -35,5 +37,5 @@ RewriteRule ^eliminar/arbitro/([0-9]+)$ include/Libs.php?accion=deletearbitro&id
 RewriteRule ^eliminar/equipo/([0-9]+)$ include/Libs.php?accion=deleteequipo&id=$1 [L,NC]
 RewriteRule ^expulsar/equipo/([0-9]+)/([0-9]+)$ include/Libs.php?accion=popequipo&id=$1&uid=$2 [L,NC]
 RewriteRule ^capitan/equipo/([0-9]+)/([0-9]+)$ include/Libs.php?accion=capiequipo&id=$1&uid=$2 [L,NC]
-RewriteRule ^cancelar/partido/([0-9]+)/([0-9]+)$ include/Libs.php?accion=cancelarpartido&cancha=$1&hora=$2 [L,NC]
+RewriteRule ^cancelar/partido/([0-9]+)$ include/Libs.php?accion=cancelarpartido&id=$1 [L,NC]
 RewriteRule ^confirmar$ include/Libs.php?accion=confirmar
